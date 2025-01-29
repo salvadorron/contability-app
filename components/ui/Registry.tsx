@@ -6,15 +6,18 @@ export default function Registry() {
         <View style={styles.container}>
             <Link href="/add_registry" asChild>
                 <Pressable style={styles.button}>
-                    <Text>Agregar Nuevo Registro</Text>
+                    <Text style={styles.buttonText}>Agregar Nuevo Registro</Text>
                 </Pressable>
+                
             </Link>
-        </View>
+          
+          </View>
     )
 }
 
 const styles = StyleSheet.create({
   container: {
+    gap: 8,
     padding: 8
   },
   button: {
@@ -27,5 +30,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: '#fff',
     padding: 12
+  },
+  buttonText: {
+    fontSize: 16,
+    textTransform: 'uppercase',
+    color: '#fff',
   }
 });

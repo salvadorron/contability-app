@@ -1,21 +1,47 @@
 import { ProductItemProp } from "@/constants/definitions";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import useProductContext from "@/hooks/useProductContext";
+import { FontAwesome } from "@expo/vector-icons";
+import { useSQLiteContext } from "expo-sqlite";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 
 export default function ProductItem({ product }: { product: ProductItemProp }) {
+    
+    const db = useSQLiteContext()
+  const { setProduct, products } = useProductContext()
+    const handleTrash = async () => {
+      try{
+        db.runAsync(`UPDATE transactions set status = 'deleted' WHERE id = ${product.id}`);
+        const filteredProducts = products.map(item => item.id === product.id ? {...item, status: 'deleted'} : item); 
+        setProduct(filteredProducts);
+        const currentProduct = products.find(item => item.id === product.id);
+        const balance = await db.getFirstAsync<{ amount: number }>(`SELECT amount FROM balance WHERE id = ?`, [1]);
+        if(!balance) {
+          await db.runAsync(`INSERT INTO balance (amount) VALUES (?)`, [0]);
+        }
+          const currentBalance =  Number(balance?.amount) - Number(currentProduct?.amount);
+          await db.runAsync(`UPDATE balance set amount = ?`, [currentBalance]);
+      }catch(err) {
+        console.log(err);
+      }
+    }
+
     return (
         <View style={styles.content}>
             <View style={styles.wrapper}>
                 <View style={styles.wrapperHeading}>
-                    <Text style={product.type === 'ingreso' ? styles.textIngreso : styles.textEgreso}>{`$${product.amount}`}</Text>
-                    <Text>{product.type === 'ingreso' ? '(Ingreso)' : '(Egreso)'}</Text>
+                    <Text style={product.type === 'income' ? styles.textIngreso : styles.textEgreso}>{`${product.type === 'income' ? '+' : '-'}$${product.amount}`}</Text>
+                    <Text>{product.type === 'income' ? '(Ingreso)' : '(Egreso)'}</Text>
                 </View>
                 <View>
                     <Text>{new Date().toLocaleDateString()}</Text>
                 </View>
             </View>
-            <View>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text>{product.description}</Text>
+                <Pressable onPress={handleTrash}>
+                    <FontAwesome size={24} name="trash" color={'red'} />
+                </Pressable>
             </View>
         </View>
     )
@@ -30,10 +56,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   textIngreso: {
-    color: 'red',
+    color: 'green',
   },
   textEgreso: {
-    color: 'green'
+    color: 'red'
   },
   wrapper: {
     flex: 1,

@@ -1,5 +1,6 @@
 import TabSwitcher from '@/components/TabSwitcher';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Pressable } from 'react-native-gesture-handler';
 import DatePicker from '@/components/DatePicker';
 import { useEffect, useState } from 'react';
@@ -8,41 +9,71 @@ import DescriptionInput from '@/components/DescriptionInput';
 import { DateType } from 'react-native-ui-datepicker';
 import { useSQLiteContext } from 'expo-sqlite';
 import moment from 'moment';
+import { useRouter } from 'expo-router';
+import useProductContext from '@/hooks/useProductContext';
+import { ProductItemProp } from '@/constants/definitions';
 
 
 export default function TabTwoScreen() {
-
-
   const [type, setType] = useState('income')
   const [date, setDate] = useState<DateType>()
-  const [amount, setAmount] = useState<string>("0")
+  const [amount, setAmount] = useState<string>("")
   const [description, setDescription] = useState<string>("")
-  const sqlite = useSQLiteContext()
-
-  useEffect(() => {
-    sqlite.execAsync('CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, type TEXT, date TEXT);')
-      .then(() => console.log('database initialized'))
-  }, [])
-
+  const db = useSQLiteContext()
+  const { products, setProduct } = useProductContext();
+  const router = useRouter();
+  
   const onSubmit = async () => {
-    await sqlite.execAsync(`INSERT INTO transactions (amount, type, date) VALUES (${amount}, ${type}, ${moment(date?.toString()).format('DD-MM-YYYY HH:mm')});`);
-    console.log("saved")
+    try{
+      const data = await db.runAsync(`INSERT INTO transactions (type,amount, description, date, status) VALUES (?, ?, ?, ?, ?);`, [
+        type, amount, description, moment(date?.toString()).format('DD-MM-YYYY HH:mm'), 'active' 
+      ]);
+
+      const product: ProductItemProp = {
+        id: data.lastInsertRowId.toString(),
+        amount: +amount,
+        description,
+        type,
+        date: moment(date?.toString()).format('DD-MM-YYYY HH:mm'),
+        status: 'active'
+      }
+
+      const newValues = [...products, product];
+      setProduct(newValues);
+
+      const balance = await db.getFirstAsync<{ amount: number }>(`SELECT amount FROM balance WHERE id = ?`, [1]);
+      
+      if(!balance) {
+        await db.runAsync(`INSERT INTO balance (amount) VALUES (?)`, [0]);
+      }
+
+      if(product.type === 'income') {
+        const currentBalance = Number(product.amount) + Number(balance?.amount);
+        await db.runAsync(`UPDATE balance set amount =  ?`, [currentBalance]);
+      }
+
+      if(product.type === 'expense') {
+        const currentBalance = Number(product.amount) + Number(balance?.amount);
+        await db.runAsync(`UPDATE balance set amount =  ?`, [currentBalance]);
+      }
+      router.back();
+    }catch(error){
+      console.log(error)
+    }
   }
 
 
   return (
+    <SafeAreaView>
     <View style={styles.container}>
       <Text>Tipo de Registro</Text>
       <TabSwitcher value={type} onChange={setType} />
       <DatePicker value={date} onChange={setDate} />
       <AmountInput value={amount} onChange={setAmount} />
       <DescriptionInput value={description} onChange={setDescription} />
-      <Pressable onPress={onSubmit} style={styles.submit}>
-        <Text>
-          Enviar
-        </Text>
-      </Pressable>
+      <Button title='Enviar' onPress={onSubmit}  />
     </View>
+    </SafeAreaView>
   );
 }
 
@@ -56,7 +87,8 @@ const styles = StyleSheet.create({
   },
   container: {
     display: 'flex',
-    padding: 8,
+    paddingLeft: 4,
+    paddingRight: 4,
     flexDirection: 'column',
     gap: 8
   },

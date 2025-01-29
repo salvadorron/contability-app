@@ -5,4 +5,6 @@ export type ProductItemProp = {
     type: string;
     amount: number;
     description: string;
+    date: string
+    status: string
 }

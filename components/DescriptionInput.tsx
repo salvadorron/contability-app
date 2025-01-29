@@ -5,7 +5,7 @@ export default function DescriptionInput({value, onChange}: {value: string, onCh
     return (
         <View style={styles.container}>
             <Text>Monto</Text>
-            <TextInput inputMode='numeric' value={value} onChangeText={(text) => onChange(text)} placeholder="Monto" style={styles.input} />
+            <TextInput inputMode='text' value={value} onChangeText={(text) => onChange(text)} placeholder="Descripcion" style={styles.input} />
         </View>
     )
 }
@@ -20,13 +20,14 @@ const styles = StyleSheet.create({
   },
   container: {
     display: 'flex',
-    padding: 8,
+    paddingLeft: 4,
+    paddingRight: 4,
     flexDirection: 'column',
     gap: 8
   },
   input: {
     borderWidth: 1,
-    padding: 4,
+    padding: 8,
     borderColor: '#ccc',
     borderRadius: 4
   },

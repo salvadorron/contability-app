@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SQLiteDatabase, SQLiteProvider } from 'expo-sqlite';
+import ProductProvider from '@/components/ProductProvider';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -31,7 +32,8 @@ export default function RootLayout() {
 
 
   return (
-    <SQLiteProvider databaseName="accounting.db" onInit={migrateDbIfNeeded} assetSource={{ assetId: require('../assets/accounting.db') }}>
+    <SQLiteProvider databaseName="accounting.db" onInit={createDbIfNeeded} assetSource={{ assetId: require('../assets/accounting.db') }}>
+      <ProductProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DefaultTheme : DefaultTheme}>
         <GestureHandlerRootView>
           <Stack>
@@ -42,11 +44,13 @@ export default function RootLayout() {
           <StatusBar style="auto" />
         </GestureHandlerRootView>
       </ThemeProvider>
+      </ProductProvider>
     </SQLiteProvider>
   );
 }
 
 
-async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  await db.execAsync(`CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL, type TEXT, date TEXT);`);
+async function createDbIfNeeded(db: SQLiteDatabase) {
+  await db.execAsync(`CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT,  type TEXT, amount REAL, description TEXT, date TEXT, status TEXT);`);
+  await db.execAsync(`CREATE TABLE IF NOT EXISTS balance (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL);`);
 }

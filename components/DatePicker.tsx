@@ -17,7 +17,7 @@ export default function DatePicker({ value, onChange }: { value: DateType, onCha
       <Text>Fecha</Text>
       <Pressable style={styles.selectPicker}
         onPress={() => setShow(!show)}>
-        <Text>
+        <Text style={value === undefined ? styles.placeholder : {}}> 
           {value ? dayjs(value).format('DD/MM/YYYY') : 'Seleccionar Fecha'}
         </Text>
       </Pressable>
@@ -34,6 +34,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
   },
+  placeholder: {
+    color: '#999'
+  },
   selectPicker: {
     borderWidth: 1,
     padding: 8,
@@ -45,7 +48,8 @@ const styles = StyleSheet.create({
   },
   container: {
     display: 'flex',
-    padding: 8,
+    paddingLeft: 4,
+    paddingRight: 4,
     flexDirection: 'column',
     gap: 8
   },

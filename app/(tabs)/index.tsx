@@ -1,14 +1,16 @@
 import Balance from '@/components/Balance';
 import ProductList from '@/components/ProductList';
 import Registry from '@/components/ui/Registry';
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { StyleSheet, Text, View, ScrollView } from 'react-native';
 
 export default function HomeScreen() {
 
   return (
+    <SafeAreaView>
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Balance General</Text>
+        <Text style={styles.headerTitle}>Libro de Contabilidad</Text>
       </View>
       <View style={styles.stepContainer}>
         <Registry />
@@ -16,13 +18,15 @@ export default function HomeScreen() {
         <ProductList />
       </View>      
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8
+    paddingLeft: 4,
+    paddingRight: 4
   },
   titleContainer: {
     flexDirection: 'row',
