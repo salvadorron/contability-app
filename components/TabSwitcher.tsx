@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-export default function TabSwitcher ({value, onChange}: {value: string, onChange: (value: string) => void}) {
+export default function TabSwitcher({ value, onChange }: { value: string, onChange: (value: string) => void }) {
 
 
-    return (
-        <View style={styles.tabSwitcher}>
-            <Pressable style={[styles.button, value === 'income' ? styles.active : {}]} onPress={() => onChange('income')}>Ingreso</Pressable>
-            <Pressable style={[styles.button, value === 'expense' ? styles.active : {}]} onPress={() => onChange('expense')}>Egreso</Pressable>
-        </View>
-    )
+  return (
+    <View style={styles.tabSwitcher}>
+      <Pressable style={[styles.button, value === 'income' ? styles.active : {}]} onPress={() => onChange('income')}>
+        <Text>Ingreso</Text>
+      </Pressable>
+      <Pressable style={[styles.button, value === 'expense' ? styles.active : {}]} onPress={() => onChange('expense')}>
+        <Text>Egreso</Text>
+      </Pressable>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({

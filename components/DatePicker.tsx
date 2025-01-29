@@ -3,22 +3,27 @@ import DateTimePicker, { DateType } from "react-native-ui-datepicker";
 import dayjs from "dayjs";
 import { useState } from "react";
 
-export default function DatePicker({value, onChange}: {value: DateType, onChange: (value: DateType) => void}) {
+export default function DatePicker({ value, onChange }: { value: DateType, onChange: (value: DateType) => void }) {
 
-      const [show, setShow] = useState(false)
-    
-      const onValueChange = (params: { date: DateType }) => {
-        onChange(dayjs(params.date))
-        setShow(false);
-      }
+  const [show, setShow] = useState(false)
 
-    return (
-        <View style={styles.container}>
-            <Text>Fecha</Text>
-            <Pressable style={styles.selectPicker} onPress={() => setShow(!show)}>{value ? dayjs(value).format('DD/MM/YYYY') : 'Seleccionar Fecha'}</Pressable>
-            {show && <DateTimePicker mode="single" date={value} onChange={onValueChange} />}
-        </View>
-    )
+  const onValueChange = (params: { date: DateType }) => {
+    onChange(dayjs(params.date))
+    setShow(false);
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text>Fecha</Text>
+      <Pressable style={styles.selectPicker}
+        onPress={() => setShow(!show)}>
+        <Text>
+          {value ? dayjs(value).format('DD/MM/YYYY') : 'Seleccionar Fecha'}
+        </Text>
+      </Pressable>
+      {show && <DateTimePicker mode="single" date={value} onChange={onValueChange} />}
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -59,7 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 4,
   },
-  
+
   titleContainer: {
     flexDirection: 'row',
     gap: 8,
