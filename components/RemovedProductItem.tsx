@@ -8,7 +8,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 export default function RemovedProductItem({ product }: { product: ProductItemProp }) {
     
     const db = useSQLiteContext()
-  const { setProduct, products } = useProductContext()
+  const { setProduct, products, setBalance } = useProductContext()
     const handleTrash = async () => {
       try{
         await db.runAsync(`UPDATE transactions set status = 'active' WHERE id = ${product.id}`);
@@ -23,14 +23,17 @@ export default function RemovedProductItem({ product }: { product: ProductItemPr
         }
 
         if(product.type === 'income') {
-          const currentBalance = Number(product.amount) + Number(balance?.amount);
+          const currentBalance = Number(balance?.amount) + Number(product.amount);
           await db.runAsync(`UPDATE balance set amount =  ?`, [currentBalance]);
+          setBalance(currentBalance);
         }
   
         if(product.type === 'expense') {
-          const currentBalance = Number(product.amount) + Number(balance?.amount);
+          const currentBalance = Number(balance?.amount) - Number(product.amount) ;
           await db.runAsync(`UPDATE balance set amount =  ?`, [currentBalance]);
+          setBalance(currentBalance);
         }
+
 
       }catch(err) {
         console.log(err);

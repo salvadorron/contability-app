@@ -1,29 +1,17 @@
 import useProductContext from "@/hooks/useProductContext";
-import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Balance () {
 
-  const db = useSQLiteContext()
-  const [balance, setBalance] = useState<number>(0);
-
-    db.getFirstAsync<{ amount: number }>(`SELECT amount FROM balance WHERE id = ?`, [1]).then((balance) => {
-      if(balance) {
-        setBalance(balance.amount);
-      } else {
-        db.runAsync(`INSERT INTO balance (amount) VALUES (?)`, [0]);
-        setBalance(0);
-      }
-    })
+  const { balance } = useProductContext();
 
     return (
         <View style={styles.container}>
             <View>
-                <Text>Balance Final</Text>
+                <Text style={styles.text}>Balance Final</Text>
             </View>
             <View>
-                <Text>{balance}</Text>
+                <Text style={[styles.text, balance < 0 ? styles.expense : styles.income]}>{balance < 0 ? `$${Math.abs(balance)}` : `$${balance}`}</Text>
             </View>
         </View>
     )
@@ -47,9 +35,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerTitle: {
-    fontSize: 24,
-    padding: 4
+  income: {
+    color: 'green'
+  },
+  expense: {
+    color: 'red'
+  },
+  text: {
+    fontSize: 18,
   },
   stepContainer: {
     gap: 8,

@@ -51,6 +51,8 @@ export default function RootLayout() {
 
 
 async function createDbIfNeeded(db: SQLiteDatabase) {
+  // await db.execAsync(`DROP TABLE IF EXISTS transactions;`);
+  // await db.execAsync(`DROP TABLE IF EXISTS balance;`);
   await db.execAsync(`CREATE TABLE IF NOT EXISTS transactions (id INTEGER PRIMARY KEY AUTOINCREMENT,  type TEXT, amount REAL, description TEXT, date TEXT, status TEXT);`);
   await db.execAsync(`CREATE TABLE IF NOT EXISTS balance (id INTEGER PRIMARY KEY AUTOINCREMENT, amount REAL);`);
 }

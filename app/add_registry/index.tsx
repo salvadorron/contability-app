@@ -20,7 +20,7 @@ export default function TabTwoScreen() {
   const [amount, setAmount] = useState<string>("")
   const [description, setDescription] = useState<string>("")
   const db = useSQLiteContext()
-  const { products, setProduct } = useProductContext();
+  const { products, setProduct, setBalance } = useProductContext();
   const router = useRouter();
   
   const onSubmit = async () => {
@@ -48,13 +48,15 @@ export default function TabTwoScreen() {
       }
 
       if(product.type === 'income') {
-        const currentBalance = Number(product.amount) + Number(balance?.amount);
+        const currentBalance = Number(balance?.amount) + Number(product.amount);
         await db.runAsync(`UPDATE balance set amount =  ?`, [currentBalance]);
+        setBalance(currentBalance);
       }
 
       if(product.type === 'expense') {
-        const currentBalance = Number(product.amount) + Number(balance?.amount);
+        const currentBalance = Number(balance?.amount) - Number(product.amount) ;
         await db.runAsync(`UPDATE balance set amount =  ?`, [currentBalance]);
+        setBalance(currentBalance);
       }
       router.back();
     }catch(error){

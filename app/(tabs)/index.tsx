@@ -10,7 +10,7 @@ export default function HomeScreen() {
     <SafeAreaView>
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Libro de Contabilidad</Text>
+        <Text style={styles.headerTitle}>Consulta Popular</Text>
       </View>
       <View style={styles.stepContainer}>
         <Registry />
