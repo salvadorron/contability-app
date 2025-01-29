@@ -13,14 +13,16 @@
       "infoPlist": {
         "NSDocumentDirectoryUsageDescription": "Esta aplicación necesita acceso a la carpeta de documentos para exportar archivos"
       }
-
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["WRITE_EXTERNAL_STORAGE"]
+      "permissions": [
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.salvadorron.contabilityapp"
     },
     "web": {
       "bundler": "metro",
@@ -48,13 +50,23 @@
             "useSQLCipher": false
           },
           "ios": {
-            "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
+            "customBuildFlags": [
+              "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+            ]
           }
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "a2867ab4-ca0d-4c31-84df-2be7c791b6ed"
+      }
     }
   }
 }
