@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSDocumentDirectoryUsageDescription": "Esta aplicación necesita acceso a la carpeta de documentos para exportar archivos"
-      }
+      },
+      "bundleIdentifier": "com.salvadorron.contabilityapp"
     },
     "android": {
       "adaptiveIcon": {
